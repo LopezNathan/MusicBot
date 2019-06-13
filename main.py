@@ -35,20 +35,27 @@ class Audio(object):
 
     def video_extracter(video_url):
         with yt_dl:
-            result = yt_dl.extract_info(
+            video_data = yt_dl.extract_info(
                 video_url,
                 download=False
             )
 
-        return result['formats'][0]['url']
+        return video_data
+
+    def video_url(video_data):
+        return video_data['formats'][0]['url']
+
+    def video_title(video_data):
+        return video_data['title']
 
     @client.event
     async def on_message(message):
 
         if message.content.startswith("!play"):
-            video_url = Audio.video_extracter(message.content[6:])
-            # channel = message.author.voice.channel
-            # connection = await channel.connect()
+            video_data = Audio.video_extracter(message.content[6:])
+            video_url = Audio.video_url(video_data)
+            video_title = Audio.video_title(video_data)
+
             connection = await Bot.bot_connector(message)
             connection.play(discord.FFmpegPCMAudio(video_url))
 
