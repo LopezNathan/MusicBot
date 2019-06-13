@@ -25,6 +25,10 @@ class Bot(object):
         except:
             await message.channel.send("Already connected to Voice channel..")
 
+    async def set_bot_status(video_title):
+        activity = discord.Activity(name=video_title, type=discord.ActivityType.watching)
+        return await client.change_presence(activity=activity)
+
     @client.event
     async def on_ready():
         print(client.user.name + " connected successfully.")
@@ -57,6 +61,8 @@ class Audio(object):
             video_title = Audio.video_title(video_data)
 
             connection = await Bot.bot_connector(message)
+            await Bot.set_bot_status(video_title)
+
             connection.play(discord.FFmpegPCMAudio(video_url))
 
         if message.content.startswith("!disconnect"):
