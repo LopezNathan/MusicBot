@@ -24,7 +24,7 @@ class Bot(object):
             await message.channel.send("Already connected to Voice channel..")
 
     async def set_bot_status(video_title):
-        activity = discord.Activity(name=video_title, type=discord.ActivityType.watching)
+        activity = discord.Activity(name=video_title, type=discord.ActivityType.listening)
         return await client.change_presence(activity=activity)
 
     @client.event
