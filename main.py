@@ -1,6 +1,5 @@
 import discord
 import youtube_dl
-from os import environ
 
 client = discord.Client()
 yt_dl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
@@ -8,9 +7,8 @@ yt_dl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
 
 class Bot(object):
 
-    # Pull Discord Bot Token from Environment Variable "BOT_TOKEN"
-    if environ.get('BOT_TOKEN') is not None:
-        BOT_TOKEN = environ.get('BOT_TOKEN')
+    # Pull Discord Bot Token from Docker Secrets
+    BOT_TOKEN = open('/run/secrets/bot_token').read()
 
     def bot_runner():
         client.run(Bot.BOT_TOKEN)
