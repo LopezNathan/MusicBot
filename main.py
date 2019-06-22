@@ -1,8 +1,12 @@
 import discord
 import youtube_dl
+import logging
 
 client = discord.Client()
 yt_dl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class Bot(object):
@@ -16,11 +20,14 @@ class Bot(object):
     async def bot_connector(message):
         try:
             channel = message.author.voice.channel
+            logger.info(client.user.name + " connected to voice channel.")
             return await channel.connect()
         except AttributeError:
+            logger.exception('No voice channel available.')
             await message.channel.send("Connect to a Voice channel first.")
         # TODO - Capture proper exception
         except:
+            logger.exception('bare Exception')
             await message.channel.send("Already connected to Voice channel..")
 
     async def set_bot_status(video_title):
@@ -29,8 +36,9 @@ class Bot(object):
 
     @client.event
     async def on_ready():
-        print(client.user.name + " connected successfully.")
-        print("-------------------")
+        logger.info("-------------------")
+        logger.info(client.user.name + " connected successfully.")
+        logger.info("-------------------")
 
 
 class Audio(object):
@@ -61,11 +69,13 @@ class Audio(object):
             connection = await Bot.bot_connector(message)
             await Bot.set_bot_status(video_title)
 
+            logger.info(f'is playing: {connection.is_playing()}')
             connection.play(discord.FFmpegPCMAudio(video_url))
 
         if message.content.startswith("!disconnect"):
             for connection in client.voice_clients:
                 await connection.disconnect()
+                logger.info(client.user.name + " disconnected from voice channel.")
 
 
 Bot.bot_runner()
